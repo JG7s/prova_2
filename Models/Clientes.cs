@@ -1,11 +1,14 @@
 using System.ComponentModel.DataAnnotations;
-public class Pessoa : ModelBase
+
+public class Clientes : ModelBase
 {
-    
+    public string CPF { get; set; }
+    public string InscricaoEstatudal { get; set; }
     public string Nome { get; set; }
-    public string Sobrenome { get; set; }
-    public string Endereco { get; set; }
-    public string Cidade { get; set; }
-    public string Cep { get; set; }
-    public string Telefone { get; set; }
+    public string NomeFantasia { get; set; }
+    public string NumeroEndereco { get; set; }
+    public string Bairro { get; set; }
+    public string Cidades { get; set; }
+    public string Estado { get; set; }
+    public DateTime DataNascimento { get; set; }
 }

@@ -1,0 +1,50 @@
+@model IEnumerable<ClientesViewModel>
+
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<h1>Clientes</h1>
+
+<p>
+    <a class="btn btn-primary mb-3" asp-action="RegistroClientes">Novo Cliente</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>CPF</th>
+            <th>Inscrição Estadual</th>
+            <th>Nome</th>
+            <th>Nome Fantasia</th>
+            <th>Nº Endereço</th>
+            <th>Bairro</th>
+            <th>Cidade</th>
+            <th>Estado</th>
+            <th>Data Nascimento</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (ClientesViewModel Clientes in Model)
+        {
+            <tr>
+                <td>@Clientes.Id</td>
+                <td>@Clientes.CPF</td>
+                <td>@Clientes.InscricaoEstatudal</td>
+                <td>@Clientes.Nome</td>
+                <td>@Clientes.NomeFantasia</td>
+                <td>@Clientes.NumeroEndereco</td>
+                <td>@Clientes.Bairro</td>
+                <td>@Clientes.Cidades</td>
+                <td>@Clientes.Estado</td>
+                <td>@Clientes.DataNascimento.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <a class="btn btn-sm btn-warning" asp-action="RegistroClientes" asp-route-id="@Clientes.Id">Editar</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Excluir" asp-route-id="@Clientes.Id">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
