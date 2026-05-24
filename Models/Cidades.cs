@@ -1,4 +1,5 @@
-public class Cidades : ModelBase
+public class Cidade : ModelBase
 {
     public string Nome { get; set; }
+    
 }

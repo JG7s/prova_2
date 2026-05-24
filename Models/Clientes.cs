@@ -8,7 +8,7 @@ public class Clientes : ModelBase
     public string NomeFantasia { get; set; }
     public string NumeroEndereco { get; set; }
     public string Bairro { get; set; }
-    public string Cidades { get; set; }
+    public string Cidade { get; set; }
     public string Estado { get; set; }
     public DateTime DataNascimento { get; set; }
 }

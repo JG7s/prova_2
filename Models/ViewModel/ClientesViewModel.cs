@@ -26,10 +26,10 @@ public class ClientesViewModel
     public string Cidade { get; set; }
 
     [Required(ErrorMessage = "O Estado é obrigatório")]
-    public string Estado { get; set; }
-
+     public string Estado { get; set; }
+   
     [Required(ErrorMessage = "A Data de Nascimento ou de abertura de CNPJ é obrigatória")]
     public DateTime DataNascimento { get; set; }
 
-    public List<SelectListItem> Cidades { get; set; }
+    public List<SelectListItem>? Cidades { get; set; }
 }

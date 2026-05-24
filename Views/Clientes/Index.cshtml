@@ -4,10 +4,18 @@
     ViewData["Title"] = "Clientes";
 }
 
+@if (TempData["Mensagem"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Mensagem"]
+    </div>
+}
+
 <h1>Clientes</h1>
 
 <p>
     <a class="btn btn-primary mb-3" asp-action="RegistroClientes">Novo Cliente</a>
+    <a class="btn btn-secondary mb-3" asp-controller="Home" asp-action="Index">Home</a>
 </p>
 
 <table class="table">
@@ -37,7 +45,7 @@
                 <td>@Clientes.NomeFantasia</td>
                 <td>@Clientes.NumeroEndereco</td>
                 <td>@Clientes.Bairro</td>
-                <td>@Clientes.Cidades</td>
+                <td>@Clientes.Cidade</td>
                 <td>@Clientes.Estado</td>
                 <td>@Clientes.DataNascimento.ToString("dd/MM/yyyy")</td>
                 <td>

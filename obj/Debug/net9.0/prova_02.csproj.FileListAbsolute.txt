@@ -301,4 +301,5 @@ C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\prova_02.pdb
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\prova_02.genruntimeconfig.cache
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\ref\prova_02.dll
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\prova_02.sourcelink.json
-C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\au946bwh17-flbl44mbyw.gz
+C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\vzh1y1j2jk-kstwkwnc4p.gz
+C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\au946bwh17-e589vibopf.gz

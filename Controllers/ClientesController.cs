@@ -8,18 +8,18 @@ public class ClientesController : Controller
 {
 
     private readonly IBanco<Clientes> BancoClientes;
-    private readonly IBanco<Cidades> BancoCidades;
+    private readonly IBanco<Cidade> BancoCidades;
     public ClientesController()
     {
         BancoClientes = new Banco<Clientes>();        
-        BancoCidades = new Banco<Cidades>();
+        BancoCidades = new Banco<Cidade>();
     }
-
     public IActionResult Index()
     {
         var teste = BancoCidades.Listar();
-        var Clientes =  BancoClientes.Listar();
-        return View(Clientes.Select(p => new ClientesViewModel
+        var clientes = BancoClientes.Listar();
+
+        return View(clientes.Select(p => new ClientesViewModel
         {
             Id = p.Id,
             CPF = p.CPF,
@@ -28,7 +28,7 @@ public class ClientesController : Controller
             NomeFantasia = p.NomeFantasia,
             NumeroEndereco = p.NumeroEndereco,
             Bairro = p.Bairro,
-            Cidade = p.Cidades,
+            Cidade = p.Cidade,
             Estado = p.Estado,
             DataNascimento = p.DataNascimento
         }));
@@ -36,45 +36,63 @@ public class ClientesController : Controller
 
     public IActionResult RegistroClientes(int id = 0)
     {
+        var cidades = BancoCidades.Listar().Select(
+            p => new SelectListItem
+            {
+                Value = p.Nome,
+                Text = p.Nome
+            }
+        ).ToList();
+
+        // EDITAR
         if (id != 0)
         {
-            Clientes Clientes = BancoClientes.Listar()
+            Clientes clientes = BancoClientes.Listar()
                 .FirstOrDefault(p => p.Id == id);
 
             return View(new ClientesViewModel
             {
-                Id = Clientes.Id,
-                CPF = Clientes.CPF,
-                InscricaoEstatudal = Clientes.InscricaoEstatudal,
-                Nome = Clientes.Nome,
-                NomeFantasia = Clientes.NomeFantasia,
-                NumeroEndereco = Clientes.NumeroEndereco,
-                Bairro = Clientes.Bairro,
-                Cidade = Clientes.Cidades,
-                Estado = Clientes.Estado,
-                DataNascimento = Clientes.DataNascimento,
-                
+                Id = clientes.Id,
+                CPF = clientes.CPF,
+                InscricaoEstatudal = clientes.InscricaoEstatudal,
+                Nome = clientes.Nome,
+                NomeFantasia = clientes.NomeFantasia,
+                NumeroEndereco = clientes.NumeroEndereco,
+                Bairro = clientes.Bairro,
+                Cidade = clientes.Cidade,
+                Estado = clientes.Estado,
+                DataNascimento = clientes.DataNascimento,
+                Cidades = cidades
             });
         }
-        return View(new ClientesViewModel 
-        { 
+
+        // NOVO
+        return View(new ClientesViewModel
+        {
             Id = 0,
-            Cidades = BancoCidades.Listar().Select(
-                p=> new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.Nome                    
-                }
-            ).ToList(),});
+            Cidades = cidades
+        });
     }
 
+    [HttpPost]
     public IActionResult Salvar(ClientesViewModel model)
     {
-        
+        // Se tiver erro no formulário
         if (!ModelState.IsValid)
         {
+            // Recarrega as cidades
+            model.Cidades = BancoCidades.Listar().Select(
+                p => new SelectListItem
+                {
+                    Value = p.Nome,
+                    Text = p.Nome
+                }
+            ).ToList();
+
             return View("RegistroClientes", model);
         }
+
+        // ALTERAR
         if (model.Id != 0)
         {
             Clientes clientes = new Clientes
@@ -86,15 +104,21 @@ public class ClientesController : Controller
                 NomeFantasia = model.NomeFantasia,
                 NumeroEndereco = model.NumeroEndereco,
                 Bairro = model.Bairro,
-                Cidades = model.Cidade,
+                Cidade = model.Cidade,
                 Estado = model.Estado,
                 DataNascimento = model.DataNascimento,
             };
+
             BancoClientes.Alterar(model.Id, clientes);
+
+            TempData["Mensagem"] = "Cliente alterado com sucesso!";
         }
+
+        // NOVO CADASTRO
         else
         {
             int maxId = 0;
+
             if (BancoClientes.Listar().Any())
                 maxId = BancoClientes.Listar().Max(p => p.Id);
 
@@ -109,12 +133,16 @@ public class ClientesController : Controller
                 NomeFantasia = model.NomeFantasia,
                 NumeroEndereco = model.NumeroEndereco,
                 Bairro = model.Bairro,
-                Cidades = model.Cidade,
+                Cidade = model.Cidade,
                 Estado = model.Estado,
                 DataNascimento = model.DataNascimento,
             };
+
             BancoClientes.Adicionar(clientes);
+
+            TempData["Mensagem"] = "Cliente cadastrado com sucesso!";
         }
+
         return RedirectToAction("Index");
     }
 
