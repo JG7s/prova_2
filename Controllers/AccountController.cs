@@ -23,20 +23,10 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Login()
     {
-        var hash = new PasswordHasher<object>();
-
-        var senhaHash = hash.HashPassword(null, "123"); 
-
-        var usr = new Usuario
-        {
-            Login = "Admin",
-            Senha = senhaHash            
-        }; 
-
-        BancoUsuario.Adicionar(usr);
-
         return View();
-    }  
+    }
+
+    
 
     [HttpPost]
     public async Task<IActionResult> Login(string Login, string Senha)
@@ -79,10 +69,58 @@ public class AccountController : Controller
             ViewBag.Erro = "Usuário Invalido";
             return View();
         }
+
+        
         
 
         
     }  
+
+    [HttpGet]
+    public IActionResult Cadastro()
+    {
+        return View(new UsuarioViewModel());
+    }
+
+    [HttpPost]
+    public IActionResult Cadastro(UsuarioViewModel model)
+    {
+        // Valida se as senhas coincidem
+        if (model.Senha != model.ConfirmarSenha)
+        {
+            ViewBag.Erro = "As senhas não coincidem!";
+            return View(model);
+        }
+
+        // Verifica se o login já existe
+        var existe = BancoUsuario.Listar().Any(p => p.Login == model.Login);
+        if (existe)
+        {
+            ViewBag.Erro = "Este login já está em uso!";
+            return View(model);
+        }
+
+        // Gera o próximo Id
+        int maxId = BancoUsuario.Listar().Any()
+            ? BancoUsuario.Listar().Max(p => p.Id)
+            : 0;
+
+        // Hash da senha
+        var hash = new PasswordHasher<object>();
+
+        var usuario = new Usuario
+        {
+            Id    = maxId + 1,
+            Nome  = model.Nome,
+            Login = model.Login,
+            Senha = hash.HashPassword(null, model.Senha)
+        };
+
+        BancoUsuario.Adicionar(usuario);
+
+        TempData["Mensagem"] = "Conta criada com sucesso!";
+        return RedirectToAction("Login");
+    }
 
     
     public async Task<IActionResult> Logout()

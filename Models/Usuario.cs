@@ -1,5 +1,10 @@
-public class Usuario : ModelBase
-{
-    public string Login { get; set; }
-    public string Senha { get; set; }
-}
+    public class Usuario : ModelBase
+    {
+        public int Id { get; set; }
+
+        public string Nome { get; set; }
+
+        public string Login { get; set; }
+
+        public string Senha { get; set; }
+    }
