@@ -92,6 +92,13 @@ public class AccountController : Controller
             return View(model);
         }
 
+        if (string.IsNullOrEmpty(model.Nome) || string.IsNullOrEmpty(model.Login) || string.IsNullOrEmpty(model.Senha) || string.IsNullOrEmpty(model.ConfirmarSenha))
+        {
+            ViewBag.Erro = "Todos os campos são obrigatórios!";
+            return View(model);
+        }
+
+
         // Verifica se o login já existe
         var existe = BancoUsuario.Listar().Any(p => p.Login == model.Login);
         if (existe)
@@ -107,6 +114,7 @@ public class AccountController : Controller
 
         // Hash da senha
         var hash = new PasswordHasher<object>();
+        
 
         var usuario = new Usuario
         {
@@ -116,6 +124,7 @@ public class AccountController : Controller
             Senha = hash.HashPassword(null, model.Senha)
         };
 
+        
         BancoUsuario.Adicionar(usuario);
 
         TempData["Mensagem"] = "Conta criada com sucesso!";
