@@ -225,9 +225,6 @@ C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\scopedcss\bundle\pro
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\scopedcss\projectbundle\prova_02.bundle.scp.css
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\uv031fxt8w-b9sayid5wm.gz
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\h6omkww5zz-2bf0zsjval.gz
-C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\2l3dvvhv0u-xfqqgttgy6.gz
-C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\wi6htu72vx-pwggzn528n.gz
-C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\1pm2bqdmne-n4l16k127z.gz
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\6wrgjiffci-61n19gt1b8.gz
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\bg3pz5qz7t-xtxxf3hu2r.gz
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\1af181z7yg-bqjiyaj88i.gz
@@ -301,5 +298,5 @@ C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\prova_02.pdb
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\prova_02.genruntimeconfig.cache
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\ref\prova_02.dll
 C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\prova_02.sourcelink.json
-C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\vzh1y1j2jk-s4o43rjadh.gz
-C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\au946bwh17-i0qh2nqxs9.gz
+C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\vzh1y1j2jk-8qw5rqx2el.gz
+C:\Users\famil\OneDrive\Documentos\prova_2\obj\Debug\net9.0\compressed\au946bwh17-elv2ksb2mr.gz

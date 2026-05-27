@@ -44,9 +44,14 @@ public class Banco<Tmodel> : IBanco<Tmodel> where Tmodel : ModelBase
         var bdModel = Dados.FirstOrDefault(p => 
             p.Id == id);
         
-        Dados.Remove(bdModel);
-        Dados.Add(model);
-        SalvarDados();
+        if (bdModel != null)
+        {
+            int index = Dados.IndexOf(bdModel);
+
+            Dados[index] = model;
+
+            SalvarDados();
+        }
     }
 
     public void Excluir(int id)

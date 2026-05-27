@@ -137,4 +137,70 @@ public class AccountController : Controller
         await HttpContext.SignOutAsync();
         return View("Login");
     }    
+
+
+    // Edição de usuario
+
+    [HttpGet]
+    public IActionResult Editar()
+    {
+        var loginUsuario = User.Identity.Name;
+
+        var usuario = BancoUsuario.Listar()
+            .FirstOrDefault(p => p.Login == loginUsuario);
+
+        if(usuario == null)
+            return RedirectToAction("Login");
+
+        EditarUserViewModel model = new EditarUserViewModel
+        {
+            Id = usuario.Id,
+            Nome = usuario.Nome,
+            Login = usuario.Login
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    public IActionResult Editar(EditarUserViewModel model)
+    {
+        var usuario = BancoUsuario.Busca(model.Id);
+
+        if(usuario == null)
+            return RedirectToAction("Login");
+
+        usuario.Nome = model.Nome;
+        usuario.Login = model.Login;
+
+        // ALTERAR SENHA SOMENTE SE DIGITAR A SENHA
+        /*if(!string.IsNullOrEmpty(model.NovaSenha))
+        {
+            if(model.NovaSenha != model.ConfirmarSenha)
+            {
+                ViewBag.Erro = "As senhas não coincidem";
+                return View(model);
+            }
+
+            var hash = new PasswordHasher<object>();
+
+            usuario.Senha = hash.HashPassword(
+                null,
+                model.NovaSenha
+            );
+        }*/
+
+        var hash = new PasswordHasher<object>();
+
+            usuario.Senha = hash.HashPassword(
+                null,
+                model.NovaSenha
+            );
+
+        BancoUsuario.Alterar(usuario.Id, usuario);
+
+        TempData["Mensagem"] = "Usuário alterado com sucesso!";
+
+        return RedirectToAction("Editar");
+    }
 }
