@@ -240,7 +240,7 @@
 
         <!-- Form -->
         <div class="form-container">
-            <form asp-action="Salvar" method="post">
+            <form asp-action="Salvar" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="Id" />
 
                 <div class="section-label">Dados fiscais</div>
@@ -339,8 +339,13 @@
                     </div>
                 </div>
 
-                <div class="divider"></div>
-
+                <<div class="form-group mb-3"> 
+                    <label class="form-label">Imagem</label>
+                    <input asp-for="Imagem" type="file" />
+                </div>
+                <div class="form-group mb-3">         
+                    <img src="@Model.CaminhoImagem" width="300" />
+                </div>   
                 <button type="submit" class="btn-salvar" value="Salvar">
                     <i class="fa fa-save me-2"></i> Salvar
                 </button>

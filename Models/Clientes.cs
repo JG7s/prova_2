@@ -10,5 +10,6 @@ public class Clientes : ModelBase
     public string Bairro { get; set; }
     public string Cidade { get; set; }
     public string Estado { get; set; }
+    public string CaminhoImagem { get; set; }
     public DateTime DataNascimento { get; set; }
 }

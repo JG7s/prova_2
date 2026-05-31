@@ -70,10 +70,6 @@ public class AccountController : Controller
             return View();
         }
 
-        
-        
-
-        
     }  
 
     [HttpGet]
@@ -163,44 +159,43 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public IActionResult Editar(EditarUserViewModel model)
+    public async Task<IActionResult> Editar(EditarUserViewModel model)
     {
-        var usuario = BancoUsuario.Busca(model.Id);
+        // Busca diretamente da lista
+        var todos = BancoUsuario.Listar();
+        var usuario = todos.FirstOrDefault(p => p.Id == model.Id);
 
-        if(usuario == null)
-            return RedirectToAction("Login");
+        if (usuario == null)
+        {
+            ViewBag.Erro = $"Usuário Id={model.Id} não encontrado!";
+            return View(model);
+        }
 
-        usuario.Nome = model.Nome;
+        usuario.Nome  = model.Nome;
         usuario.Login = model.Login;
 
-        // ALTERAR SENHA SOMENTE SE DIGITAR A SENHA
-        /*if(!string.IsNullOrEmpty(model.NovaSenha))
+        if (!string.IsNullOrEmpty(model.NovaSenha))
         {
-            if(model.NovaSenha != model.ConfirmarSenha)
+            if (model.NovaSenha != model.ConfirmarSenha)
             {
-                ViewBag.Erro = "As senhas não coincidem";
+                ViewBag.Erro = "As senhas não coincidem!";
                 return View(model);
             }
-
             var hash = new PasswordHasher<object>();
-
-            usuario.Senha = hash.HashPassword(
-                null,
-                model.NovaSenha
-            );
-        }*/
-
-        var hash = new PasswordHasher<object>();
-
-            usuario.Senha = hash.HashPassword(
-                null,
-                model.NovaSenha
-            );
+            usuario.Senha = hash.HashPassword(null, model.NovaSenha);
+        }
 
         BancoUsuario.Alterar(usuario.Id, usuario);
 
-        TempData["Mensagem"] = "Usuário alterado com sucesso!";
+        // Atualiza o cookie caso o login tenha mudado
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, usuario.Login)
+        };
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
+        TempData["Mensagem"] = "Usuário alterado com sucesso!";
         return RedirectToAction("Editar");
     }
 }

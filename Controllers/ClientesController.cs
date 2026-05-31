@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 [Authorize]
 public class ClientesController : Controller
 {
-
     private readonly IBanco<Clientes> BancoClientes;
     private readonly IBanco<Cidade> BancoCidades;
     public ClientesController()
@@ -54,6 +53,7 @@ public class ClientesController : Controller
             {
                 Id = clientes.Id,
                 CPF = clientes.CPF,
+                CaminhoImagem = clientes.CaminhoImagem,
                 InscricaoEstatudal = clientes.InscricaoEstatudal,
                 Nome = clientes.Nome,
                 NomeFantasia = clientes.NomeFantasia,
@@ -75,7 +75,7 @@ public class ClientesController : Controller
     }
 
     [HttpPost]
-    public IActionResult Salvar(ClientesViewModel model)
+    public async Task<IActionResult> SalvarAsync(ClientesViewModel model)
     {
         // Se tiver erro no formulário
         if (!ModelState.IsValid)
@@ -109,6 +109,19 @@ public class ClientesController : Controller
                 DataNascimento = model.DataNascimento,
             };
 
+            
+
+            string pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads");
+            string nomeArquivo = Guid.NewGuid().ToString() + Path.GetExtension(model.Imagem.FileName);
+            string caminho = Path.Combine(pasta, nomeArquivo);
+        
+            using(var strem = new FileStream(caminho, FileMode.Create))
+            {
+                await model.Imagem.CopyToAsync(strem);
+            }   
+
+            clientes.CaminhoImagem = $"/uploads/{nomeArquivo}";
+
             BancoClientes.Alterar(model.Id, clientes);
 
             TempData["Mensagem"] = "Cliente alterado com sucesso!";
@@ -138,10 +151,22 @@ public class ClientesController : Controller
                 DataNascimento = model.DataNascimento,
             };
 
+            string pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads");
+            string nomeArquivo = Guid.NewGuid().ToString() + Path.GetExtension(model.Imagem.FileName);
+            string caminho = Path.Combine(pasta, nomeArquivo);
+        
+            using(var strem = new FileStream(caminho, FileMode.Create))
+            {
+                await model.Imagem.CopyToAsync(strem);
+            }   
+
+            clientes.CaminhoImagem = $"/uploads/{nomeArquivo}";
             BancoClientes.Adicionar(clientes);
 
             TempData["Mensagem"] = "Cliente cadastrado com sucesso!";
         }
+
+        
 
         return RedirectToAction("Index");
     }

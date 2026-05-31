@@ -32,4 +32,7 @@ public class ClientesViewModel
     public DateTime DataNascimento { get; set; }
 
     public List<SelectListItem>? Cidades { get; set; }
+
+    public IFormFile? Imagem { get; set; } 
+    public string? CaminhoImagem { get; set; } 
 }
