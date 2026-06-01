@@ -22,6 +22,7 @@ public class ClientesController : Controller
         {
             Id = p.Id,
             CPF = p.CPF,
+            CaminhoImagem = p.CaminhoImagem,
             InscricaoEstatudal = p.InscricaoEstatudal,
             Nome = p.Nome,
             NomeFantasia = p.NomeFantasia,
@@ -32,6 +33,8 @@ public class ClientesController : Controller
             DataNascimento = p.DataNascimento
         }));
     }
+
+    
 
     public IActionResult RegistroClientes(int id = 0)
     {
@@ -90,7 +93,11 @@ public class ClientesController : Controller
             ).ToList();
 
             return View("RegistroClientes", model);
-        }
+
+
+            }
+            
+
 
         // ALTERAR
         if (model.Id != 0)
@@ -109,7 +116,28 @@ public class ClientesController : Controller
                 DataNascimento = model.DataNascimento,
             };
 
-            
+            // ✅ VERIFICAÇÃO DE DUPLICIDADE
+            var todosCLientes = BancoClientes.Listar();
+
+            var duplicadoCPF = todosCLientes.Any(p => p.CPF == model.CPF && p.Id != model.Id);
+            var duplicadoIE  = todosCLientes.Any(p => p.InscricaoEstatudal == model.InscricaoEstatudal && p.Id != model.Id);
+
+            if (duplicadoCPF)
+                ModelState.AddModelError("CPF", "Já existe um cliente com este CPF/CNPJ.");
+
+            if (duplicadoIE)
+                ModelState.AddModelError("InscricaoEstatudal", "Já existe um cliente com esta Inscrição Estadual.");
+
+            if (duplicadoCPF || duplicadoIE)
+            {
+                model.Cidades = BancoCidades.Listar().Select(p => new SelectListItem
+                {
+                    Value = p.Nome,
+                    Text = p.Nome
+                }).ToList();
+
+                return View("RegistroClientes", model);
+            }
 
             string pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads");
             string nomeArquivo = Guid.NewGuid().ToString() + Path.GetExtension(model.Imagem.FileName);
