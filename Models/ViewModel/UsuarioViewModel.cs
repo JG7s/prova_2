@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 public class UsuarioViewModel
 {       
-    [Required(ErrorMessage = "O Nome é obrigatório")]
-    public string Nome { get; set; }
+    [Required(ErrorMessage = "O E-mail é obrigatório")]
+    public string Email { get; set; }
 
     [Required(ErrorMessage = "O Login é obrigatório")]
     public string Login { get; set; }

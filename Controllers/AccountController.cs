@@ -88,7 +88,7 @@ public class AccountController : Controller
             return View(model);
         }
 
-        if (string.IsNullOrEmpty(model.Nome) || string.IsNullOrEmpty(model.Login) || string.IsNullOrEmpty(model.Senha) || string.IsNullOrEmpty(model.ConfirmarSenha))
+        if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Login) || string.IsNullOrEmpty(model.Senha) || string.IsNullOrEmpty(model.ConfirmarSenha))
         {
             ViewBag.Erro = "Todos os campos são obrigatórios!";
             return View(model);
@@ -115,7 +115,7 @@ public class AccountController : Controller
         var usuario = new Usuario
         {
             Id    = maxId + 1,
-            Nome  = model.Nome,
+            Email = model.Email,
             Login = model.Login,
             Senha = hash.HashPassword(null, model.Senha)
         };
@@ -151,7 +151,7 @@ public class AccountController : Controller
         EditarUserViewModel model = new EditarUserViewModel
         {
             Id = usuario.Id,
-            Nome = usuario.Nome,
+            Email = usuario.Email,
             Login = usuario.Login
         };
 
@@ -171,24 +171,40 @@ public class AccountController : Controller
             return View(model);
         }
 
-        usuario.Nome  = model.Nome;
+        usuario.Email  = model.Email;
         usuario.Login = model.Login;
 
         if (!string.IsNullOrEmpty(model.NovaSenha))
         {
+            if (string.IsNullOrEmpty(model.SenhaAtual))
+            {
+                ViewBag.Erro = "Informe a senha atual para alterá-la.";
+                return View(model);
+            }
+
+            var hasher = new PasswordHasher<object>();
+            var resultado = hasher.VerifyHashedPassword(null, usuario.Senha, model.SenhaAtual);
+
+            if (resultado == PasswordVerificationResult.Failed)
+            {
+                ViewBag.Erro = "Senha atual incorreta.";
+                return View(model);
+            }
+
             if (model.NovaSenha != model.ConfirmarSenha)
             {
                 ViewBag.Erro = "As senhas não coincidem!";
                 return View(model);
             }
-            var hash = new PasswordHasher<object>();
-            usuario.Senha = hash.HashPassword(null, model.NovaSenha);
+
+            usuario.Senha = hasher.HashPassword(null, model.NovaSenha);
         }
+        
+        Console.WriteLine($"Id: {usuario.Id}");
+        Console.WriteLine($"Login: {usuario.Login}");
+        Console.WriteLine($"Senha nova: {usuario.Senha}");
 
-        BancoUsuario.Alterar(usuario.Id, usuario);
-
-        // Atualiza o cookie caso o login tenha mudado
-        var claims = new List<Claim>
+        BancoUsuario.Alterar(usuario.Id, usuario);var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, usuario.Login)
         };
@@ -198,4 +214,38 @@ public class AccountController : Controller
         TempData["Mensagem"] = "Usuário alterado com sucesso!";
         return RedirectToAction("Editar");
     }
+
+    [HttpPost]
+    public IActionResult AlterarSenha(AlterarSenhaViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var usuario = BancoUsuario.Listar().FirstOrDefault(p => p.Id == model.Id);
+
+        if (usuario == null)
+        {
+            ModelState.AddModelError("", "Usuário não encontrado.");
+            return View(model);
+        }
+
+        // 1. Verifica se a senha atual está correta
+        var hasher = new PasswordHasher<object>();
+        var resultado = hasher.VerifyHashedPassword(usuario, usuario.Senha, model.SenhaAtual);
+
+        if (resultado == PasswordVerificationResult.Failed)
+        {
+            ModelState.AddModelError("SenhaAtual", "Senha atual incorreta.");
+            return View(model);
+        }
+
+        // 2. Gera o hash da nova senha e salva
+        usuario.Senha = hasher.HashPassword(usuario, model.NovaSenha);
+
+        BancoUsuario.Alterar(usuario.Id, usuario);
+
+        TempData["Sucesso"] = "Senha alterada com sucesso!";
+        return RedirectToAction("Index");
+    }
+
 }

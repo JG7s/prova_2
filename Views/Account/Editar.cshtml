@@ -191,13 +191,13 @@
             <div class="section-label">Informações pessoais</div>
 
             <div class="mb-4">
-                <label class="form-label">Nome</label>
+                <label class="form-label">E-mail</label>
                 <div class="icon-input">
-                    <i class="fa fa-id-card"></i>
+                    <i class="fa fa-envelope"></i>
                     <input
-                        asp-for="Nome"
+                        asp-for="Email"
                         class="form-control"
-                        placeholder="Digite seu nome" />
+                        placeholder="Digite seu E-mail" />
                 </div>
             </div>
 
@@ -215,6 +215,17 @@
             <div class="divider"></div>
 
             <div class="section-label">Alterar senha</div>
+            <div class="mb-4">
+                <label class="form-label">Senha Atual</label>
+                <div class="icon-input">
+                    <i class="fa fa-lock"></i>
+                    <input
+                        asp-for="SenhaAtual"
+                        type="password"
+                        class="form-control"
+                        placeholder="Digite sua senha atual" />
+                </div>
+            </div>
 
             <div class="mb-4">
                 <label class="form-label">Nova Senha</label>
