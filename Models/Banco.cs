@@ -37,10 +37,13 @@ public class Banco<Tmodel> : IBanco<Tmodel> where Tmodel : ModelBase
     }
 
     public void Adicionar(Tmodel model)
+    
     {
         Dados.Add(model);
         SalvarDados();
     }
+
+    
 
     public void Alterar(int id, Tmodel model)
     {

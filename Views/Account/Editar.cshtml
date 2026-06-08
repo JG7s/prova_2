@@ -41,6 +41,27 @@
             margin: 30px auto;
         }
 
+                .btn-exportar {
+            height: 42px;
+            padding: 0 20px;
+            background: #1e3a5f;
+            color: #93c5fd;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-exportar:hover {
+            background: #1e40af;
+            color: #bfdbfe;
+        }
+
         .edit-title {
             text-align: center;
             color: white;
@@ -170,6 +191,8 @@
             Editar dados da conta
         </div>
 
+        
+
         @if (ViewBag.Erro != null)
         {
             <div class="erro">
@@ -255,7 +278,17 @@
                 Salvar Alterações
             </button>
 
+            
         </form>
+        <br/>
+        <div>
+             @if (Model.Id != 0)
+            {
+                <a asp-action="Exportar" asp-route-id="@Model.Id" class="btn-exportar">
+                    <i class="fa fa-file-export"></i> Exportar
+                </a>
+            }
+        </div>
 
         <div class="footer-text">
             <a asp-controller="Home" asp-action="Index">

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using System.Text;
 
 namespace prova_02.Controllers;
 
@@ -119,7 +120,6 @@ public class AccountController : Controller
             Login = model.Login,
             Senha = hash.HashPassword(null, model.Senha)
         };
-
         
         BancoUsuario.Adicionar(usuario);
 
@@ -164,7 +164,6 @@ public class AccountController : Controller
         // Busca diretamente da lista
         var todos = BancoUsuario.Listar();
         var usuario = todos.FirstOrDefault(p => p.Id == model.Id);
-
         if (usuario == null)
         {
             ViewBag.Erro = $"Usuário Id={model.Id} não encontrado!";
@@ -199,10 +198,6 @@ public class AccountController : Controller
 
             usuario.Senha = hasher.HashPassword(null, model.NovaSenha);
         }
-        
-        Console.WriteLine($"Id: {usuario.Id}");
-        Console.WriteLine($"Login: {usuario.Login}");
-        Console.WriteLine($"Senha nova: {usuario.Senha}");
 
         BancoUsuario.Alterar(usuario.Id, usuario);var claims = new List<Claim>
         {
@@ -246,6 +241,16 @@ public class AccountController : Controller
 
         TempData["Sucesso"] = "Senha alterada com sucesso!";
         return RedirectToAction("Index");
+    }
+
+    public IActionResult Exportar(int id)
+    {
+        var pessoal = BancoUsuario.Busca(id);
+        string json = System.Text.Json.JsonSerializer.Serialize(pessoal);
+
+        var bytes = Encoding.UTF8.GetBytes(json);
+
+        return File(bytes, "text/json", "dados.json");    
     }
 
 }
