@@ -48,7 +48,6 @@ public class Banco<Tmodel> : IBanco<Tmodel> where Tmodel : ModelBase
     public void Alterar(int id, Tmodel model)
     {
         
-        // Busca direto em Dados, não em uma cópia
         int index = Dados.FindIndex(p => p.Id == id);
 
         if (index >= 0)
