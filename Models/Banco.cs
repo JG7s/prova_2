@@ -47,11 +47,7 @@ public class Banco<Tmodel> : IBanco<Tmodel> where Tmodel : ModelBase
 
     public void Alterar(int id, Tmodel model)
     {
-        Console.WriteLine($"Procurando Id: {id}");
-        foreach (var item in Dados)
-        {
-            Console.WriteLine($"Id no Dados: {item.Id}");
-        }
+        
         // Busca direto em Dados, não em uma cópia
         int index = Dados.FindIndex(p => p.Id == id);
 

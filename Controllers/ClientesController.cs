@@ -8,11 +8,13 @@ public class ClientesController : Controller
 {
     private readonly IBanco<Clientes> BancoClientes;
     private readonly IBanco<Cidade> BancoCidades;
+
     public ClientesController()
     {
-        BancoClientes = new Banco<Clientes>();        
+        BancoClientes = new Banco<Clientes>();
         BancoCidades = new Banco<Cidade>();
     }
+
     public IActionResult Index()
     {
         var teste = BancoCidades.Listar();
@@ -20,33 +22,28 @@ public class ClientesController : Controller
 
         return View(clientes.Select(p => new ClientesViewModel
         {
-            Id = p.Id,
-            CPF = p.CPF,
-            CaminhoImagem = p.CaminhoImagem,
+            Id                 = p.Id,
+            CPF                = p.CPF,
+            CaminhoImagem      = p.CaminhoImagem,
             InscricaoEstatudal = p.InscricaoEstatudal,
-            Nome = p.Nome,
-            NomeFantasia = p.NomeFantasia,
-            NumeroEndereco = p.NumeroEndereco,
-            Bairro = p.Bairro,
-            Cidade = p.Cidade,
-            Estado = p.Estado,
-            DataNascimento = p.DataNascimento
+            Nome               = p.Nome,
+            NomeFantasia       = p.NomeFantasia,
+            NumeroEndereco     = p.NumeroEndereco,
+            Bairro             = p.Bairro,
+            Cidade             = p.Cidade,
+            Estado             = p.Estado,
+            DataNascimento     = p.DataNascimento
         }));
     }
 
-    
-
     public IActionResult RegistroClientes(int id = 0)
     {
-        var cidades = BancoCidades.Listar().Select(
-            p => new SelectListItem
-            {
-                Value = p.Nome,
-                Text = p.Nome
-            }
-        ).ToList();
+        var cidades = BancoCidades.Listar().Select(p => new SelectListItem
+        {
+            Value = p.Nome,
+            Text  = p.Nome
+        }).ToList();
 
-        // EDITAR
         if (id != 0)
         {
             Clientes clientes = BancoClientes.Listar()
@@ -54,25 +51,24 @@ public class ClientesController : Controller
 
             return View(new ClientesViewModel
             {
-                Id = clientes.Id,
-                CPF = clientes.CPF,
-                CaminhoImagem = clientes.CaminhoImagem,
+                Id                 = clientes.Id,
+                CPF                = clientes.CPF,
+                CaminhoImagem      = clientes.CaminhoImagem,
                 InscricaoEstatudal = clientes.InscricaoEstatudal,
-                Nome = clientes.Nome,
-                NomeFantasia = clientes.NomeFantasia,
-                NumeroEndereco = clientes.NumeroEndereco,
-                Bairro = clientes.Bairro,
-                Cidade = clientes.Cidade,
-                Estado = clientes.Estado,
-                DataNascimento = clientes.DataNascimento,
-                Cidades = cidades
+                Nome               = clientes.Nome,
+                NomeFantasia       = clientes.NomeFantasia,
+                NumeroEndereco     = clientes.NumeroEndereco,
+                Bairro             = clientes.Bairro,
+                Cidade             = clientes.Cidade,
+                Estado             = clientes.Estado,
+                DataNascimento     = clientes.DataNascimento,
+                Cidades            = cidades
             });
         }
 
-        // NOVO
         return View(new ClientesViewModel
         {
-            Id = 0,
+            Id      = 0,
             Cidades = cidades
         });
     }
@@ -80,47 +76,37 @@ public class ClientesController : Controller
     [HttpPost]
     public async Task<IActionResult> SalvarAsync(ClientesViewModel model)
     {
-        // Se tiver erro no formulário
         if (!ModelState.IsValid)
         {
-            // Recarrega as cidades
-            model.Cidades = BancoCidades.Listar().Select(
-                p => new SelectListItem
-                {
-                    Value = p.Nome,
-                    Text = p.Nome
-                }
-            ).ToList();
+            model.Cidades = BancoCidades.Listar().Select(p => new SelectListItem
+            {
+                Value = p.Nome,
+                Text  = p.Nome
+            }).ToList();
 
             return View("RegistroClientes", model);
+        }
 
+        var todosClientes = BancoClientes.Listar();
 
-            }
-            
-
-
-        // ALTERAR
         if (model.Id != 0)
         {
             Clientes clientes = new Clientes
             {
-                Id = model.Id,
-                CPF = model.CPF,
+                Id                 = model.Id,
+                CPF                = model.CPF,
                 InscricaoEstatudal = model.InscricaoEstatudal,
-                Nome = model.Nome,
-                NomeFantasia = model.NomeFantasia,
-                NumeroEndereco = model.NumeroEndereco,
-                Bairro = model.Bairro,
-                Cidade = model.Cidade,
-                Estado = model.Estado,
-                DataNascimento = model.DataNascimento,
+                Nome               = model.Nome,
+                NomeFantasia       = model.NomeFantasia,
+                NumeroEndereco     = model.NumeroEndereco,
+                Bairro             = model.Bairro,
+                Cidade             = model.Cidade,
+                Estado             = model.Estado,
+                DataNascimento     = model.DataNascimento,
             };
 
-            // ✅ VERIFICAÇÃO DE DUPLICIDADE
-            var todosCLientes = BancoClientes.Listar();
-
-            var duplicadoCPF = todosCLientes.Any(p => p.CPF == model.CPF && p.Id != model.Id);
-            var duplicadoIE  = todosCLientes.Any(p => p.InscricaoEstatudal == model.InscricaoEstatudal && p.Id != model.Id);
+            var duplicadoCPF = todosClientes.Any(p => p.CPF == model.CPF && p.Id != model.Id);
+            var duplicadoIE  = todosClientes.Any(p => p.InscricaoEstatudal == model.InscricaoEstatudal && p.Id != model.Id);
 
             if (duplicadoCPF)
                 ModelState.AddModelError("CPF", "Já existe um cliente com este CPF/CNPJ.");
@@ -133,20 +119,20 @@ public class ClientesController : Controller
                 model.Cidades = BancoCidades.Listar().Select(p => new SelectListItem
                 {
                     Value = p.Nome,
-                    Text = p.Nome
+                    Text  = p.Nome
                 }).ToList();
 
                 return View("RegistroClientes", model);
             }
 
-            string pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads");
+            string pasta       = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads");
             string nomeArquivo = Guid.NewGuid().ToString() + Path.GetExtension(model.Imagem.FileName);
-            string caminho = Path.Combine(pasta, nomeArquivo);
-        
-            using(var strem = new FileStream(caminho, FileMode.Create))
+            string caminho     = Path.Combine(pasta, nomeArquivo);
+
+            using (var strem = new FileStream(caminho, FileMode.Create))
             {
                 await model.Imagem.CopyToAsync(strem);
-            }   
+            }
 
             clientes.CaminhoImagem = $"/uploads/{nomeArquivo}";
 
@@ -154,10 +140,28 @@ public class ClientesController : Controller
 
             TempData["Mensagem"] = "Cliente alterado com sucesso!";
         }
-
-        // NOVO CADASTRO
         else
         {
+            var duplicadoCPF = todosClientes.Any(p => p.CPF == model.CPF);
+            var duplicadoIE  = todosClientes.Any(p => p.InscricaoEstatudal == model.InscricaoEstatudal);
+
+            if (duplicadoCPF)
+                ModelState.AddModelError("CPF", "Já existe um cliente com este CPF/CNPJ.");
+
+            if (duplicadoIE)
+                ModelState.AddModelError("InscricaoEstatudal", "Já existe um cliente com esta Inscrição Estadual.");
+
+            if (duplicadoCPF || duplicadoIE)
+            {
+                model.Cidades = BancoCidades.Listar().Select(p => new SelectListItem
+                {
+                    Value = p.Nome,
+                    Text  = p.Nome
+                }).ToList();
+
+                return View("RegistroClientes", model);
+            }
+
             int maxId = 0;
 
             if (BancoClientes.Listar().Any())
@@ -167,34 +171,32 @@ public class ClientesController : Controller
 
             Clientes clientes = new Clientes
             {
-                Id = model.Id,
-                CPF = model.CPF,
+                Id                 = model.Id,
+                CPF                = model.CPF,
                 InscricaoEstatudal = model.InscricaoEstatudal,
-                Nome = model.Nome,
-                NomeFantasia = model.NomeFantasia,
-                NumeroEndereco = model.NumeroEndereco,
-                Bairro = model.Bairro,
-                Cidade = model.Cidade,
-                Estado = model.Estado,
-                DataNascimento = model.DataNascimento,
+                Nome               = model.Nome,
+                NomeFantasia       = model.NomeFantasia,
+                NumeroEndereco     = model.NumeroEndereco,
+                Bairro             = model.Bairro,
+                Cidade             = model.Cidade,
+                Estado             = model.Estado,
+                DataNascimento     = model.DataNascimento,
             };
 
-            string pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads");
+            string pasta       = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads");
             string nomeArquivo = Guid.NewGuid().ToString() + Path.GetExtension(model.Imagem.FileName);
-            string caminho = Path.Combine(pasta, nomeArquivo);
-        
-            using(var strem = new FileStream(caminho, FileMode.Create))
+            string caminho     = Path.Combine(pasta, nomeArquivo);
+
+            using (var strem = new FileStream(caminho, FileMode.Create))
             {
                 await model.Imagem.CopyToAsync(strem);
-            }   
+            }
 
             clientes.CaminhoImagem = $"/uploads/{nomeArquivo}";
             BancoClientes.Adicionar(clientes);
 
             TempData["Mensagem"] = "Cliente cadastrado com sucesso!";
         }
-
-        
 
         return RedirectToAction("Index");
     }
@@ -212,6 +214,6 @@ public class ClientesController : Controller
 
         var bytes = Encoding.UTF8.GetBytes(json);
 
-        return File(bytes, "text/json", "dados.json");    
+        return File(bytes, "text/json", "dados.json");
     }
 }

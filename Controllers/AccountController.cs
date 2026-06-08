@@ -1,11 +1,9 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using prova_02.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 using System.Text;
 
 namespace prova_02.Controllers;
@@ -27,25 +25,21 @@ public class AccountController : Controller
         return View();
     }
 
-    
-
     [HttpPost]
     public async Task<IActionResult> Login(string Login, string Senha)
     {
-        var usuario = BancoUsuario.Listar().FirstOrDefault(p=> p.Login == Login);
-        
-        if(usuario == null)
+        var usuario = BancoUsuario.Listar().FirstOrDefault(p => p.Login == Login);
+
+        if (usuario == null)
         {
             ViewBag.Erro = "Usuário Invalido";
             return View();
         }
-        
 
         var hash = new PasswordHasher<object>();
-
         var result = hash.VerifyHashedPassword(null, usuario.Senha, Senha);
 
-        if(result == PasswordVerificationResult.Success)
+        if (result == PasswordVerificationResult.Success)
         {
             var claims = new List<Claim>
             {
@@ -70,8 +64,7 @@ public class AccountController : Controller
             ViewBag.Erro = "Usuário Invalido";
             return View();
         }
-
-    }  
+    }
 
     [HttpGet]
     public IActionResult Cadastro()
@@ -82,7 +75,6 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult Cadastro(UsuarioViewModel model)
     {
-        // Valida se as senhas coincidem
         if (model.Senha != model.ConfirmarSenha)
         {
             ViewBag.Erro = "As senhas não coincidem!";
@@ -95,8 +87,6 @@ public class AccountController : Controller
             return View(model);
         }
 
-
-        // Verifica se o login já existe
         var existe = BancoUsuario.Listar().Any(p => p.Login == model.Login);
         if (existe)
         {
@@ -104,14 +94,11 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // Gera o próximo Id
         int maxId = BancoUsuario.Listar().Any()
             ? BancoUsuario.Listar().Max(p => p.Id)
             : 0;
 
-        // Hash da senha
         var hash = new PasswordHasher<object>();
-        
 
         var usuario = new Usuario
         {
@@ -120,22 +107,18 @@ public class AccountController : Controller
             Login = model.Login,
             Senha = hash.HashPassword(null, model.Senha)
         };
-        
+
         BancoUsuario.Adicionar(usuario);
 
         TempData["Mensagem"] = "Conta criada com sucesso!";
         return RedirectToAction("Login");
     }
 
-    
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync();
         return View("Login");
-    }    
-
-
-    // Edição de usuario
+    }
 
     [HttpGet]
     public IActionResult Editar()
@@ -145,12 +128,12 @@ public class AccountController : Controller
         var usuario = BancoUsuario.Listar()
             .FirstOrDefault(p => p.Login == loginUsuario);
 
-        if(usuario == null)
+        if (usuario == null)
             return RedirectToAction("Login");
 
         EditarUserViewModel model = new EditarUserViewModel
         {
-            Id = usuario.Id,
+            Id    = usuario.Id,
             Email = usuario.Email,
             Login = usuario.Login
         };
@@ -161,16 +144,16 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Editar(EditarUserViewModel model)
     {
-        // Busca diretamente da lista
         var todos = BancoUsuario.Listar();
         var usuario = todos.FirstOrDefault(p => p.Id == model.Id);
+
         if (usuario == null)
         {
             ViewBag.Erro = $"Usuário Id={model.Id} não encontrado!";
             return View(model);
         }
 
-        usuario.Email  = model.Email;
+        usuario.Email = model.Email;
         usuario.Login = model.Login;
 
         if (!string.IsNullOrEmpty(model.NovaSenha))
@@ -199,7 +182,9 @@ public class AccountController : Controller
             usuario.Senha = hasher.HashPassword(null, model.NovaSenha);
         }
 
-        BancoUsuario.Alterar(usuario.Id, usuario);var claims = new List<Claim>
+        BancoUsuario.Alterar(usuario.Id, usuario);
+
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, usuario.Login)
         };
@@ -224,7 +209,6 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // 1. Verifica se a senha atual está correta
         var hasher = new PasswordHasher<object>();
         var resultado = hasher.VerifyHashedPassword(usuario, usuario.Senha, model.SenhaAtual);
 
@@ -234,7 +218,6 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // 2. Gera o hash da nova senha e salva
         usuario.Senha = hasher.HashPassword(usuario, model.NovaSenha);
 
         BancoUsuario.Alterar(usuario.Id, usuario);
@@ -250,7 +233,6 @@ public class AccountController : Controller
 
         var bytes = Encoding.UTF8.GetBytes(json);
 
-        return File(bytes, "text/json", "dados.json");    
+        return File(bytes, "text/json", "dados.json");
     }
-
 }
